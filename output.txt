@@ -1,0 +1,60 @@
+--- Baba's Hut ---
+Type !inventory to see your gold and items.
+
+Baba: *Cackle*... I smell sulfur and potential. What brings you to my hut? I sell reagents, brew potions, and identify artifacts.
+
+Traveler: !inventory
+
+--- BAG (Gold: 100) ---
+ * Acorn: 3
+ * Empty Vial: 5
+
+Traveler: I want to talk to you about some work.
+
+Baba: You look like you have strong legs and a weak mind—perfect for a task. Deep in the Shimmering Grove grows the Moonglow Mushroom. Bring me three, and I'll brew you something that'll make your eyes see through stone. Do we have a deal?
+[QUEST: THE MOONGLOW MUSHROOM]
+
+Traveler: I'll think about it. For now, I need some supplies. What are you selling?
+
+Baba: My shelves are full. I have vials (2g), acorns (5g), bones (10g) and healing potions (30g).
+
+Traveler: Give me two goblin bones and a healing potion.
+
+Baba: Fine. Take your goblin-bone. Keep the change, I don't want your filth.
+
+Traveler: !inventory
+
+--- BAG (Gold: 50) ---
+ * Acorn: 3
+ * Empty Vial: 5
+ * Goblin Bone: 2
+ * Healing Potion: 1
+
+Traveler: Can you brew that defense potion you mentioned earlier?
+
+Baba: I can brew a Defense Potion if you have an acorn, a bone, and a vial. Shall we?
+
+Traveler: Yes, please brew it for me.
+
+Baba: *Stirs the pot vigorously*... There! A fresh Defense Potion. Careful, it's hot.
+
+Traveler: !inventory
+
+--- BAG (Gold: 50) ---
+ * Acorn: 2
+ * Empty Vial: 4
+ * Goblin Bone: 1
+ * Healing Potion: 1
+ * Defense Potion: 1
+
+Traveler: Actually, what does the defense potion do exactly? Can you identify it for me?
+
+Baba: 1 gold coin to reveal secrets. What shall I inspect?
+
+Traveler: This defense potion right here.
+
+Baba: *Peers into a crystal*... Ah, the Defense Potion. +20 Physical Resistance for 5 min. Anything else?
+
+Traveler: No, that's all for today. Goodbye, Baba.
+
+Baba: Begone! My hut needs to stretch its legs.

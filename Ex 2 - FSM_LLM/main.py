@@ -10,9 +10,6 @@ from typing import Dict, List
 from fsm_llm import LLMStateMachine
 from fsm_llm.state_models import FSMRun
 
-# =====================
-# ENV + GEMINI SETUP
-# =====================
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
@@ -52,9 +49,6 @@ class GeminiOpenAIWrapper:
                 self.choices = [MockChoice(text, model)]
         return MockResponse(text_out, response_format)
 
-# =====================
-# DATA MODELS
-# =====================
 class Item(BaseModel):
     id: str
     name: str
@@ -73,9 +67,6 @@ class ActionResponseModel(BaseModel):
     item_id: str | None = None
     amount: int = 1
 
-# =====================
-# FSM SETUP
-# =====================
 fsm = LLMStateMachine(initial_state="GREETING", end_state="END")
 
 # DATABASE OGGETTI
@@ -90,13 +81,9 @@ fsm.set_context_data("items", {
 fsm.set_context_data("prices", {"healing-potion": 30, "acorn": 5, "goblin-bone": 10, "vial": 2})
 fsm.set_context_data("recipes", {"defense-potion": Recipe(result_id="defense-potion", ingredients={"acorn": 1, "goblin-bone": 1, "vial": 1})})
 
-# STATO GIOCATORE E NPC
 fsm.set_context_data("player", {"money": 100, "inventory": [ItemAmount(id="acorn", amount=3), ItemAmount(id="vial", amount=5)]})
 fsm.set_context_data("witch", {"name": "Baba", "quest_given": False})
 
-# =====================
-# UTILS
-# =====================
 def resolve_item_id(input_id: str | None) -> str | None:
     if not input_id: return None
     items = fsm.get_context_data("items")
@@ -112,10 +99,6 @@ def print_inventory():
     for s in p["inventory"]:
         res += f" * {it[s.id].name}: {s.amount}\n"
     return res
-
-# =====================
-# STATES
-# =====================
 
 @fsm.define_state(
     state_key="GREETING",
@@ -228,12 +211,9 @@ async def quest_offer_state(fsm, response, **kwargs):
 @fsm.define_state(state_key="END", prompt_template="Bye", transitions={})
 async def end_state(fsm, **kwargs): return "Baba: Begone! My hut needs to stretch its legs."
 
-# =====================
-# MAIN
-# =====================
 async def main():
     client = GeminiOpenAIWrapper(api_key=api_key)
-    print(f"{colorama.Fore.MAGENTA}--- Baba's Hut (Full Version) ---{colorama.Fore.RESET}")
+    print(f"{colorama.Fore.MAGENTA}--- Baba's Hut ---{colorama.Fore.RESET}")
     print(f"{colorama.Fore.MAGENTA}Type !inventory to see your gold and items.{colorama.Fore.RESET}")
 
     # Avvio automatico
