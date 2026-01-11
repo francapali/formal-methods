@@ -1,0 +1,6 @@
+pip~=25.3
+google-genai
+python-dotenv
+pydantic
+colorama
+fsm-llm
