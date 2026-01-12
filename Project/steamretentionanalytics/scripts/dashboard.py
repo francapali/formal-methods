@@ -5,7 +5,6 @@ import os
 from PIL import Image
 from pathlib import Path
 
-# --- CONFIGURAZIONE PAGINA ---
 st.set_page_config(
     page_title="Steam Process Mining Dashboard",
     page_icon="🎮",
@@ -13,14 +12,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CSS CUSTOM PER STILE (FIX LEGGIBILITÀ TOTALE) ---
+# Custom CSS styling
 st.markdown("""
     <style>
     .main {
         background-color: #f5f5f5;
     }
     
-    /* Card delle metriche */
     [data-testid="stMetric"] {
         background-color: #ffffff;
         padding: 15px;
@@ -29,26 +27,22 @@ st.markdown("""
         border: 1px solid #e0e0e0;
     }
 
-    /* Valore numerico (es. 0.132) */
     [data-testid="stMetricValue"] {
         color: #1b2838 !important;
     }
 
-    /* Etichetta superiore (es. Fitness) */
     [data-testid="stMetricLabel"] {
         color: #555555 !important;
     }
 
-    /* FIX PER I TAG/BADGE (es. Poor, Low, Excellent) */
     [data-testid="stMetricDelta"] {
-        color: #1b2838 !important; /* Forza il testo a blu scuro */
-        background-color: rgba(0,0,0,0.05); /* Grigio chiarissimo di fondo per il badge */
+        color: #1b2838 !important;
+        background-color: rgba(0,0,0,0.05);
         padding: 2px 8px;
         border-radius: 20px;
         font-weight: bold;
     }
     
-    /* Forza il colore delle freccette e del testo delta specificamente */
     [data-testid="stMetricDelta"] > div {
         color: inherit !important;
     }
@@ -60,14 +54,12 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-# --- CARICAMENTO DATI ---
 @st.cache_data
 def load_data():
     base_dir = Path(__file__).resolve().parent.parent
     file_path = base_dir / "output" / "preprocessed_data" / "steam_enriched_log.csv"
     if os.path.exists(file_path):
         df = pd.read_csv(file_path)
-        # Conversione timestamp se necessario
         if 'timestamp' in df.columns:
             df['timestamp'] = pd.to_datetime(df['timestamp'])
         return df
@@ -83,7 +75,6 @@ def load_image(filename):
     return None
 
 
-# --- SIDEBAR ---
 with st.sidebar:
     st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png", width=100)
     st.title("Navigation")
@@ -100,7 +91,6 @@ with st.sidebar:
     st.caption("👤 Francesca Palumbo")
     st.caption("📅 A.Y. 2025/2026")
 
-# --- PAGINA 1: OVERVIEW ---
 if page == "Project Overview":
     st.title("🎮 Steam Retention Analytics")
     st.subheader("Process Mining Applied to E-Commerce Behavior")
@@ -133,17 +123,14 @@ if page == "Project Overview":
         else:
             st.warning("Dataset not found. Please ensure 'steam_event_log.csv' is in the folder.")
 
-# --- PAGINA 2: PROCESS MODELS ---
 elif page == "Process Models":
     st.title("🕸️ Process Discovery Models")
     st.write("Comparison of different mining algorithms applied to the Event Log.")
 
-    # Selettore Algoritmo
     model_type = st.selectbox("Select Algorithm:", ["Alpha Miner", "Heuristic Miner", "Inductive Miner"], index=2)
 
     col_img, col_metrics = st.columns([3, 1])
 
-    # Dati Hardcoded come da richiesta
     metrics = {
         "Alpha Miner": {"fit": 0.132, "prec": 0.340, "img": "alpha_steam.png",
                         "verdict": "❌ *Discarded.* The model is disconnected (Spaghetti structure) and fails to capture loops. Fitness is unacceptably low."},
@@ -165,11 +152,9 @@ elif page == "Process Models":
     with col_metrics:
         st.subheader("Model Evaluation")
 
-        # Fitness
         fit_color = "normal" if current['fit'] > 0.8 else "off"
         st.metric("Fitness", f"{current['fit']:.3f}", delta="Excellent" if current['fit'] > 0.9 else "-Poor", delta_color=fit_color)
 
-        # Precision
         prec_delta = "Acceptable" if current['prec'] > 0.5 else "Low (Generalization)"
         st.metric("Precision", f"{current['prec']:.3f}", delta=prec_delta, delta_color="off")
 
@@ -177,30 +162,23 @@ elif page == "Process Models":
         st.markdown("### Technical Verdict")
         st.markdown(current['verdict'])
 
-# --- PAGINA 3: BUSINESS KPI ---
 elif page == "Business KPIs":
     st.title("📊 Business Insights & KPI")
 
     df = load_data()
 
     if df is not None:
-        # Preparazione Dati
-        # 1. Analisi Varianti (Purchase Only vs Played)
         case_summary = df.groupby('case_id')['activity'].apply(list).reset_index()
         case_summary['variant_type'] = case_summary['activity'].apply(
             lambda x: 'Active Player (Played)' if 'Start Playing' in x else 'Backlog (Purchase Only)'
         )
 
-        # 2. Analisi Tempo (Purchase -> Play)
         purchase_times = df[df['activity'] == 'Purchase Game'][['case_id', 'timestamp']].rename(columns={'timestamp': 't_buy'})
         play_times = df[df['activity'] == 'Start Playing'][['case_id', 'timestamp']].rename(columns={'timestamp': 't_play'})
 
-        # Uniamo solo chi ha entrambi
         time_analysis = pd.merge(purchase_times, play_times, on='case_id')
         time_analysis['hours_delay'] = (time_analysis['t_play'] - time_analysis['t_buy']).dt.total_seconds() / 3600
-        time_analysis = time_analysis[time_analysis['hours_delay'] > 0]  # Rimuovi errori negativi
-
-        # --- ROW 1: CHARTS ---
+        time_analysis = time_analysis[time_analysis['hours_delay'] > 0]
         col1, col2 = st.columns(2)
 
         with col1:
@@ -224,7 +202,6 @@ elif page == "Business KPIs":
         st.error("Data not available. Please run the data generation script first.")
 
 
-# --- PAGINA 4: AI ANALYST ---
 elif page == "AI Analyst (Chatbot)":
     st.title("🤖 AI Process Analyst")
     st.markdown("""
@@ -232,25 +209,17 @@ elif page == "AI Analyst (Chatbot)":
     (Try asking about: 'churn', 'backlog', 'strategy', or 'anomalies')
     """)
 
-    # Inizializza chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
-        # Messaggio di benvenuto
         st.session_state.messages.append({"role": "assistant", "content": "Hello! I have analyzed 2,100 Steam user cases. Ask me about retention or bottlenecks!"})
-
-    # Mostra messaggi precedenti
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Input Utente
     if prompt := st.chat_input("Ask a question about the process..."):
-        # Aggiungi user message
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
-
-        # --- LOGICA SIMULATA (SIMULATOR) ---
         prompt_lower = prompt.lower()
         response = ""
 
@@ -290,7 +259,6 @@ elif page == "AI Analyst (Chatbot)":
             Could you please ask specifically about *churn, **backlog patterns, or **monetization strategies*?
             """
 
-        # Aggiungi risposta assistant
         st.session_state.messages.append({"role": "assistant", "content": response})
         with st.chat_message("assistant"):
             st.markdown(response)
