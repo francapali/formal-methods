@@ -1,0 +1,14 @@
+--- ESTRATTO PER LLM (REASONING) ---
+Dataset: Steam Event Log. Casi totali analizzati: 2100
+Varianti più comuni:
+1. Percorso: ('Purchase Game', 'Start Playing') - Occorrenze: 406
+2. Percorso: ('Purchase Game', 'Start Playing', 'Abandon Game (Refund Risk)') - Occorrenze: 310
+3. Percorso: ('Purchase Game', 'Start Playing', 'Purchase DLC/Season Pass') - Occorrenze: 148
+4. Percorso: ('Purchase Game',) - Occorrenze: 111
+5. Percorso: ('Purchase Game', 'Purchase Game') - Occorrenze: 30
+6. Percorso: ('Purchase Game', 'Purchase Game', 'Start Playing') - Occorrenze: 29
+7. Percorso: ('Purchase Game', 'Start Playing', 'Purchase Game', 'Start Playing', 'Abandon Game (Refund Risk)') - Occorrenze: 18
+8. Percorso: ('Purchase Game', 'Start Playing', 'Purchase Game') - Occorrenze: 18
+9. Percorso: ('Purchase Game', 'Purchase Game', 'Purchase Game') - Occorrenze: 17
+10. Percorso: ('Purchase Game', 'Purchase Game', 'Start Playing', 'Abandon Game (Refund Risk)') - Occorrenze: 16
+------------------------------------
