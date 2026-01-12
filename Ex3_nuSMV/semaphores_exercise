@@ -1,0 +1,87 @@
+-- semaphores_exercise.smv
+-- Assignment: Two semaphores that alternate and are never green at the same time.
+-- made by @francescapalumbo & @yuritateo for Formal Methods in CS - UniBA
+
+-------------------------------------------------------------------------
+-- MODULE MAIN
+-------------------------------------------------------------------------
+MODULE main
+
+-- 1. VARS
+VAR
+  -- "turn" replaces "token" for standard nomenclature
+  turn : {1, 2}; 
+  
+  -- Instantiation of the two semaphores
+  sem1 : semaphore(turn, 1);
+  sem2 : semaphore(turn, 2);
+
+-- 2. ASSIGN
+ASSIGN
+  -- Initial control: semaphore 1 starts
+  init(turn) := 1;
+
+  -- Logic: Turn passes ONLY when a semaphore signals it has finished its cycle.
+  --        Uses the exposed "is_finished" definition instead of internal state.
+  next(turn) :=
+    case
+      sem1.is_finished : 2;
+      sem2.is_finished : 1;
+      TRUE : turn;
+    esac;
+
+-- 3. SPECIFICATIONS (CTL & LTL)
+
+-- SAFETY: Mutual Exclusion (Never both green)
+SPEC AG !(sem1.state = green & sem2.state = green)
+LTLSPEC G !(sem1.state = green & sem2.state = green)
+
+-- LIVENESS: Progress (Semaphores must infinitely often reach RED/finish)
+-- Now these will pass thanks to the FAIRNESS constraint in the module.
+SPEC AG AF (sem1.is_finished)
+SPEC AG AF (sem2.is_finished)
+
+LTLSPEC G F (sem1.is_finished)
+LTLSPEC G F (sem2.is_finished)
+
+-- FAIRNESS/ALTERNATION: Strict alternation check
+SPEC AG (sem1.state = green -> AF sem2.state = green)
+LTLSPEC G (sem1.state = green -> F sem2.state = green)
+
+
+-------------------------------------------------------------------------
+-- MODULE SEMAPHORE
+-------------------------------------------------------------------------
+MODULE semaphore(turn, id)
+
+-- 1. VARS
+VAR
+  state : {wait, green, yellow, red};
+
+-- 2. DEFINES (Encapsulation)
+DEFINE
+  -- Exposes the condition "cycle completed" without exposing the internal state 'red' to main.
+  is_finished := (state = red);
+
+-- 3. ASSIGN
+ASSIGN
+  init(state) := wait;
+
+  next(state) :=
+    case
+      -- Non-deterministic wait: normally can stay in wait forever.
+      -- The FAIRNESS constraint below fixes the starvation here.
+      state = wait & turn = id : {wait, green};
+      
+      state = green  : yellow;
+      state = yellow : red;
+      state = red    : wait;
+      TRUE : state;
+    esac;
+
+-- 4. FAIRNESS
+-- This constraint forces the model to ignore paths where the semaphore
+-- has the turn but stays in 'wait' forever. It guarantees that if 
+-- (state=wait AND turn=id), eventually the system MUST move to 'green'.
+FAIRNESS
+  !(state = wait & turn = id)
