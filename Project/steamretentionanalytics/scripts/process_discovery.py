@@ -10,7 +10,8 @@ INPUT_FILE = BASE_DIR / "data" / "processed" / "steam_event_log.csv"
 OUTPUT_PREPROCESSED = BASE_DIR / "output" / "preprocessed_data"
 OUTPUT_NETS = BASE_DIR / "output" / "petri_nets"
 
-os.environ["PATH"] += os.pathsep + "Path/Per/Graphviz"
+# If Graphviz was not added to PATH, change this line to add the path to the Graphviz/bin directory.
+# os.environ["PATH"] += os.pathsep + "...Graphviz/bin"
 
 
 def augment_data(df, num_new_cases):
