@@ -6,3 +6,4 @@ Department of Computer Science at University of Bari "Aldo Moro"
 2. [Exercise 2: FSM + LLM - VideoGame NPC with Gemini](./Ex2_FSM+LLM)
 3. [Exercise 3: nuSMV - Semaphors](./Ex3_nuSMV)
 4. [Exercise 4: PetriNet - A Solution to Three Philosophers Problem](./Ex4_PetriNet)
+5. [Project: Process Mining Assignment - Steam Retention Analytics](./Project)
